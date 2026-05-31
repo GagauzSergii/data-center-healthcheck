@@ -1,6 +1,6 @@
 # Global Telemetry & Chaos Engineering Dashboard
 
-> NOTE: This is learning progect for AI MCP tools usage
+> NOTE: This is learning progect for AI MCP tools usage. 
 > A full-stack AIOps demo that visualises a distributed network on an interactive 3D globe and provides a control panel to simulate real-time chaos incidents.
 
 ![Tech Stack](https://img.shields.io/badge/React-18-61DAFB?logo=react) ![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?logo=fastapi) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql) ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)
