@@ -145,5 +145,17 @@ def triage_incident(container_name: str = "backend") -> str:
     )
 
 
+@mcp.resource("runbook://incident-triage")
+def incident_triage_runbook() -> str:
+    """Basic incident triage runbook for MCP resource consumers."""
+    return (
+        "Incident Triage Runbook\n"
+        "1. Read recent container logs using get_container_logs.\n"
+        "2. Identify the first actionable root cause signal.\n"
+        "3. Summarize impact, scope, and mitigation options.\n"
+        "4. Create and track follow-up work items in Jira."
+    )
+
+
 if __name__ == "__main__":
-    mcp.run()
+    mcp.run(transport="stdio")
