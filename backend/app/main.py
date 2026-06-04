@@ -19,10 +19,11 @@ async def lifespan(app: FastAPI):
 		print("Database tables created or verified.")
 
 	async with AsyncSessionLocal() as session:
-		if await seed_nodes(session):
-			print("Seeded global nodes.")
+		created_nodes = await seed_nodes(session)
+		if created_nodes:
+			print(f"Seeded {created_nodes} missing global node(s).")
 		else:
-			print("Nodes already seeded; skipping.")
+			print("All global seed nodes already exist; skipping.")
 
 	yield
 

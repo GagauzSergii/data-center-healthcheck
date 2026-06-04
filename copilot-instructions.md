@@ -4,7 +4,7 @@
 
 ### 1. postgres
 Connects directly to the telemetry database.
-- Connection: `postgresql://postgres:postgres@localhost:5432/telemetry`
+- Connection: `postgresql://<POSTGRES_USER>:<POSTGRES_PASSWORD>@localhost:5432/<POSTGRES_DB>`
 - Tables: `nodes`, `telemetry_logs`
 - Use for: querying node status, incident history, health metrics
 - Always use parameterized queries
@@ -20,6 +20,13 @@ Connects to Jira via Atlassian Remote MCP.
 - Endpoint: `https://mcp.atlassian.com/v1/mcp`
 - Use for: reading tickets, updating status, adding comments, creating issues
 - Note: ignore `-32601` errors in VS Code — tool calls execute successfully
+
+Jira execution pattern (required):
+1. Always call `getAccessibleAtlassianResources` first and take `id` as `cloudId`.
+2. For status changes, call `getTransitionsForJiraIssue` before `transitionJiraIssue`.
+3. Then call `getJiraIssue` to verify the final status.
+4. Treat localized status names as valid equivalents (for example `In Progress` == `В роботі`).
+5. If user references only a ticket number, assume project key `SCRUM` (for example `5` -> `SCRUM-5`).
 
 Example tasks:
 - "Show all In Progress tasks in the current sprint"
@@ -53,5 +60,7 @@ Example tasks:
 - Always prefer MCP tools over manual SQL or API calls
 - Do not hardcode credentials — use existing MCP server configuration
 - For Postgres: use parameterized queries, close connections after use
+- For Atlassian: always resolve `cloudId` via `getAccessibleAtlassianResources` before Jira issue operations
+- For Atlassian: `missing cloudId` means a skipped resolution step, not an invalid token
 - For Atlassian: check current sprint context before creating new tickets
 - For docker-log-analyzer: default container is `backend`, default lines is `50`

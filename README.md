@@ -53,15 +53,55 @@
 # 1. Clone / enter the project directory
 cd data-center-healthcheck
 
-# 2. Build images and start all services
+# 2. Create environment file from template
+cp .env.example .env
+
+# 3. Build images and start all services
 docker compose up --build
 
-# 3. Open the dashboard
+# 4. Open the dashboard
 open http://localhost:5173
 ```
 
 > **First run** takes ~2–3 minutes while Docker pulls base images and `npm install` runs.  
 > Subsequent starts are near-instant.
+
+---
+
+## Rebuild After Changes (Docker)
+
+Use this when you changed backend/frontend code, Dockerfiles, or dependencies.
+
+### Fast rebuild (keep DB data)
+
+```bash
+# Stop running containers
+docker compose down
+
+# Rebuild images and start services
+docker compose up --build -d
+```
+
+### Clean rebuild (reset DB volume)
+
+```bash
+# Stop and remove containers + DB volume
+docker compose down -v
+
+# Optional: remove old images for this project
+docker compose build --no-cache
+
+# Start fresh
+docker compose up -d
+```
+
+### Check status/logs
+
+```bash
+docker compose ps
+docker compose logs -f backend
+docker compose logs -f frontend
+```
 
 ---
 
@@ -72,7 +112,7 @@ open http://localhost:5173
 | Frontend (React) | http://localhost:5173 |
 | Backend API | http://localhost:8000 |
 | API Docs (Swagger) | http://localhost:8000/docs |
-| PostgreSQL | localhost:5432 (user: `postgres`, pw: `postgres`, db: `telemetry`) |
+| PostgreSQL | localhost:5432 (credentials are loaded from `.env`) |
 
 ---
 
@@ -117,8 +157,9 @@ cd backend
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
-# Set the database URL to your local Postgres
-export DATABASE_URL="postgresql+asyncpg://postgres:postgres@localhost:5432/telemetry"
+# Set required secrets for local run
+export DATABASE_URL="postgresql+asyncpg://<POSTGRES_USER>:<POSTGRES_PASSWORD>@localhost:5432/<POSTGRES_DB>"
+export JWT_SECRET="<STRONG_RANDOM_SECRET>"
 
 uvicorn app.main:app --reload --port 8000
 ```
